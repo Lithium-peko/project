@@ -1,4 +1,5 @@
 import {createRouter, createWebHistory} from 'vue-router'
+import {unauthorized} from "../net/index.js";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -6,16 +7,31 @@ const router = createRouter({
         {
             path: '/',
             name: 'welcome',
-            component: () => import('/src/views/WelcomeView.vue'),
+            component: () => import('../views/WelcomeView.vue'),
             children: [
                 {
                     path: '',
                     name: 'welcome-login',
-                    component: () => import('/src/views/welcome/LoginPage.vue')
+                    component: () => import('../views/welcome/LoginPage.vue')
                 }
             ]
+        }, {
+            path: '/index',
+            name: 'index',
+            component: () => import('../views/indexView.vue')
         }
     ]
+})
+
+router.beforeEach((to, from, next) => {
+    const isUnauthorized = unauthorized()
+    if (to.name.startsWith('welcome-') && !isUnauthorized) {
+        next('/index')
+    } else if (to.fullPath.startsWith('/index') && isUnauthorized) {
+        next('/')
+    } else {
+        next()
+    }
 })
 
 export default router
