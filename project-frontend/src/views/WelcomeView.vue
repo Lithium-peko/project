@@ -4,6 +4,7 @@
 
 <template>
   <div style="width: 100vw; height: 100vh; overflow: hidden; display: flex">
+
     <div style="flex: 1; background-color: black">
       <el-image style="width: 100%; height: 100%" fit="cover" src="src/assets/img/LoginBackground.png"/>
     </div>
@@ -13,8 +14,13 @@
     </div>
 
     <div class="right-card">
-      <router-view/>
+      <router-view v-slot="{Component}">
+        <transition name="el-fade-in-linear" mode="out-in">
+          <component :is="Component"/>
+        </transition>
+      </router-view>
     </div>
+
   </div>
 </template>
 

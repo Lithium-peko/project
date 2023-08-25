@@ -35,7 +35,7 @@ function userLogin() {
 
     <div style="margin-top: 200px">
       <div style="font-size: 25px; font-weight: bold">登录</div>
-      <div style="margin-top: 5px; font-size: 15px; color: gray">在进入系统之前，请先输入用户名和密码进行登录</div>
+      <div style="margin-top: 5px; font-size: 15px; color: grey">在进入系统之前，请先输入用户名和密码进行登录</div>
     </div>
 
     <div style="margin-top: 50px">
@@ -53,7 +53,7 @@ function userLogin() {
         </el-form-item>
 
         <el-form-item prop="password">
-          <el-input v-model="form.password" type="password" maxlength="20" placeholder="密码">
+          <el-input v-model="form.password" maxlength="20" type="password" placeholder="密码">
             <template #prefix>
               <el-icon>
                 <Lock/>
@@ -82,11 +82,11 @@ function userLogin() {
     </div>
 
     <el-divider>
-      <span style="font-size: 15px; color: gray">没有账号</span>
+      <span style="font-size: 15px; color: grey">没有账号</span>
     </el-divider>
 
     <div>
-      <el-button style="width: 270px" type="warning" plain>立即注册</el-button>
+      <el-button @click="router.push('/register')" style="width: 270px" type="warning" plain>立即注册</el-button>
     </div>
 
   </div>
