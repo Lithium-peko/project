@@ -1,11 +1,19 @@
 spring:
+  mail:
+    host: smtp.163.com
+    username: lithiumpeko@163.com
+    password: WEGWOHCUDJZZMYHN
+  rabbitmq:
+    addresses: localhost
+    username: admin
+    password: 123456
+    virtual-host: /
   security:
     filter:
       order: -100
     jwt:
       key: abcdehijk
       expire: 7
-
   datasource:
     username: root
     password: 123456
