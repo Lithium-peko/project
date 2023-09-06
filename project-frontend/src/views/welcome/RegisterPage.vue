@@ -96,7 +96,6 @@ function register() {
     </div>
 
     <div style="margin-top: 50px">
-
       <el-form :model="form" :rules="rule" ref="formRef">
 
         <el-form-item prop="username">
@@ -161,7 +160,6 @@ function register() {
 
           </el-row>
         </el-form-item>
-
       </el-form>
 
       <div style="margin-top: 80px">
