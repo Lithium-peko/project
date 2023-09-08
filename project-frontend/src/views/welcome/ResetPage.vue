@@ -92,7 +92,8 @@ const form = reactive({
           </el-form-item>
 
           <el-form-item prop="password_repeat">
-            <el-input v-model="form.password_repeat" maxlength="20" type="password" placeholder="重复密码" show-password>
+            <el-input v-model="form.password_repeat" maxlength="20" type="password" placeholder="重复密码"
+                      show-password>
               <template #prefix>
                 <el-icon>
                   <Lock/>
