@@ -16,6 +16,6 @@ spring:
       expire: 7
   datasource:
     username: root
-    password: 123456
+    password: 123456789
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/project
