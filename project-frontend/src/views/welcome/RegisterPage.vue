@@ -62,7 +62,7 @@ function askCode() {
   if (isEmailValid) {
     coldTime.value = 60
     get(`/api/auth/ask-code?email=${form.email}&type=register`, () => {
-      ElMessage.success(`验证法已发送到邮箱: ${form.email}，请注意查收`)
+      ElMessage.success(`验证码已发送到邮箱: ${form.email}，请注意查收`)
       setInterval(() => coldTime.value--, 1000)
     }, (message) => {
       ElMessage.warning(message)
@@ -178,6 +178,4 @@ function register() {
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
