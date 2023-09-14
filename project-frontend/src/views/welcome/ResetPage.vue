@@ -1,8 +1,15 @@
 <script setup>
-import {reactive, ref} from "vue";
+import {computed, reactive, ref} from "vue";
 import {ChatLineRound, Lock, Message} from "@element-plus/icons-vue";
+import {get, post} from "../../net/index.js";
+import {ElMessage} from "element-plus";
+import router from "../../router/index.js";
 
 const active = ref(0)
+const formRef = ref()
+const coldTime = ref(0)
+
+const isEmailValid = computed(() => /^[\w.-]+@[\w.-]+\.\w+$/.test(form.email))
 
 const form = reactive({
   email: '',
@@ -10,6 +17,70 @@ const form = reactive({
   password_repeat: '',
   code: ''
 })
+
+const validatePassword = (rule, value, callback) => {
+  if (value === '') {
+    callback(new Error('请再次输入密码'))
+  } else if (value !== form.password) {
+    callback(new Error('两次输入的密码不一致'))
+  } else {
+    callback()
+  }
+}
+
+const rule = {
+  username: [
+    {required: true, message: '请输入电子邮件地址', trigger: ['blur']},
+    {type: 'email', message: '请输入合法的电子邮件地址', trigger: ['blur', 'change']}
+  ],
+  code: [
+    {required: true, message: '请输入验证码', trigger: 'blur'}
+  ],
+  password: [
+    {required: true, message: '请输入密码', trigger: 'blur'},
+    {min: 6, max: 20, message: "密码的长度必须在6 - 20 个字符之间", trigger: ['blur']}
+  ],
+  password_repeat: [
+    {validator: validatePassword, trigger: ['blur', 'change']}
+  ],
+}
+
+function askCode() {
+  if (isEmailValid) {
+    coldTime.value = 60
+    get(`/api/auth/ask-code?email=${form.email}&type=register`, () => {
+      ElMessage.success(`验证码已发送到邮箱: ${form.email}，请注意查收`)
+      setInterval(() => coldTime.value--, 1000)
+    }, (message) => {
+      ElMessage.warning(message)
+      coldTime.value = 0
+    })
+  } else {
+    ElMessage.warning('请输入正确的电子邮件!')
+  }
+}
+
+function confirmReset() {
+  formRef.value.validate((valid) => {
+    if (valid) {
+      post('/api/auth/reset-confirm', {
+        email: form.email,
+        code: form.code
+      }, () => active.value++)
+    }
+  })
+}
+
+function doReset() {
+  formRef.value.validate((valid) => {
+    if (valid) {
+      post('/api/auth/reset-password', {...form}, () => {
+        ElMessage.success('密码重置成功，请重新登录')
+        router.push('/')
+      })
+    }
+  })
+}
 </script>
 
 <template>
@@ -29,7 +100,7 @@ const form = reactive({
       </div>
 
       <div style="margin-top: 50px">
-        <el-form :model="form">
+        <el-form :model="form" :rules="rule" ref="formRef">
 
           <el-form-item prop="email">
             <el-input v-model="form.email" type="email" placeholder="电子邮件地址">
@@ -55,8 +126,8 @@ const form = reactive({
               </el-col>
 
               <el-col :span="6">
-                <el-button type="success" plain>
-                  获取验证码
+                <el-button @click="askCode" :disabled="!isEmailValid || coldTime > 0" type="success" plain>
+                  {{ coldTime > 0 ? `请稍后 ${coldTime} 秒` : '获取验证码' }}
                 </el-button>
               </el-col>
 
@@ -67,7 +138,7 @@ const form = reactive({
       </div>
 
       <div style="margin-top: 80px">
-        <el-button @click="active++" style="width: 270px" type="warning" plain>开始重置密码</el-button>
+        <el-button @click="confirmReset" style="width: 270px" type="warning" plain>开始重置密码</el-button>
       </div>
 
     </div>
@@ -79,7 +150,7 @@ const form = reactive({
       </div>
 
       <div style="margin-top: 50px">
-        <el-form :model="form">
+        <el-form :model="form" :rules="rule" ref="formRef">
 
           <el-form-item prop="password">
             <el-input v-model="form.password" maxlength="20" type="password" placeholder="密码" show-password>
@@ -106,7 +177,7 @@ const form = reactive({
       </div>
 
       <div style="margin-top: 80px">
-        <el-button @click="active++" style="width: 270px" type="danger" plain>重置密码</el-button>
+        <el-button @click="doReset" style="width: 270px" type="danger" plain>重置密码</el-button>
       </div>
 
     </div>
